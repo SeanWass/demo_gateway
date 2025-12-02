@@ -2,12 +2,12 @@
 
 namespace App\Support;
 
-use App\Models\IdempotencyKey;
 use Closure;
-
-class Idempotency
+use App\Models\IdempotencyKey;
+use App\Support\IdempotencyInterface;
+class Idempotency implements IdempotencyInterface
 {
-    public static function run(Closure $callback, string $key, string $operation)
+    public function run(Closure $callback, string $key, string $operation)
     {
         // Check if action already executed
         $existing = IdempotencyKey::where('key', $key)->first();

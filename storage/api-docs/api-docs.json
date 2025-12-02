@@ -1,0 +1,482 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Payment Gateway API",
+        "description": "API documentation for payment gateway API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/payments/authorise": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Authorise a payment",
+                "description": "Authorise a payment",
+                "operationId": "24b47c2f82864db802fc21b24877cdc3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount",
+                                    "currency",
+                                    "token",
+                                    "gateway"
+                                ],
+                                "properties": {
+                                    "gateway": {
+                                        "type": "string",
+                                        "example": "stripe"
+                                    },
+                                    "amount": {
+                                        "type": "number",
+                                        "example": 199.99
+                                    },
+                                    "currency": {
+                                        "type": "string",
+                                        "example": "ZAR"
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "example": "tok_123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment authorised",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "authorised"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Invalid request"
+                    }
+                }
+            }
+        },
+        "/api/payments/{payment_id}/capture": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Capture a payment",
+                "description": "Captures a payment using the PaymentService. Optionally, you can specify an amount to capture.",
+                "operationId": "2dedec3e477dc531c1aa83c9a57cca03",
+                "parameters": [
+                    {
+                        "name": "payment_id",
+                        "in": "path",
+                        "description": "ID of the payment to capture",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Optional payload with amount to capture",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 100.5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment captured successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "payment_id": {
+                                            "type": "integer",
+                                            "example": 123
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "captured"
+                                        },
+                                        "transaction_id": {
+                                            "type": "string",
+                                            "example": "txn_abc123"
+                                        },
+                                        "gateway_meta": {
+                                            "type": "object",
+                                            "example": {
+                                                "response_code": "00",
+                                                "message": "Success"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Some error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payments/{payment_id}/void": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Void a payment",
+                "description": "Voids an existing payment using the PaymentService.",
+                "operationId": "4b5d2c30d0a171fabd887c3551602083",
+                "parameters": [
+                    {
+                        "name": "payment_id",
+                        "in": "path",
+                        "description": "ID of the payment to void",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment voided successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "payment_id": {
+                                            "type": "integer",
+                                            "example": 123
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "voided"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Some error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payments/{payment_id}/refund": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Refund a payment",
+                "description": "Refunds a payment partially or fully using the PaymentService.",
+                "operationId": "8db1b1175fc145423abac4037f3d3f8a",
+                "parameters": [
+                    {
+                        "name": "payment_id",
+                        "in": "path",
+                        "description": "ID of the payment to refund",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Refund details",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount",
+                                    "reason"
+                                ],
+                                "properties": {
+                                    "amount": {
+                                        "description": "Amount to refund",
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 50
+                                    },
+                                    "reason": {
+                                        "description": "Reason for refund",
+                                        "type": "string",
+                                        "example": "Customer requested refund"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment refunded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "payment_id": {
+                                            "type": "integer",
+                                            "example": 123
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "refunded"
+                                        },
+                                        "refund_meta": {
+                                            "type": "object",
+                                            "example": {
+                                                "response_code": "00",
+                                                "message": "Refund successful"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Some error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payments/{payment_id}": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get payment details",
+                "description": "Retrieve detailed information about a payment, including its refunds and event history.",
+                "operationId": "796d4ba83632b63e7e15de8fba053a83",
+                "parameters": [
+                    {
+                        "name": "payment_id",
+                        "in": "path",
+                        "description": "ID of the payment to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "payment": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 100.5
+                                                },
+                                                "currency": {
+                                                    "type": "string",
+                                                    "example": "USD"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "captured"
+                                                },
+                                                "refund_status": {
+                                                    "type": "string",
+                                                    "example": "partial"
+                                                },
+                                                "gateway": {
+                                                    "type": "string",
+                                                    "example": "stripe"
+                                                },
+                                                "gateway_txn_id": {
+                                                    "type": "string",
+                                                    "example": "txn_abc123"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-12-02T12:00:00Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-12-02T12:10:00Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "refunds": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "amount": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 50
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "refunded"
+                                                    },
+                                                    "reason": {
+                                                        "type": "string",
+                                                        "example": "Customer requested refund"
+                                                    },
+                                                    "gateway_refund_id": {
+                                                        "type": "string",
+                                                        "example": "refund_abc123"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-12-02T12:05:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "history": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "status_change"
+                                                    },
+                                                    "message": {
+                                                        "type": "string",
+                                                        "example": "Payment captured successfully"
+                                                    },
+                                                    "data": {
+                                                        "type": "object",
+                                                        "example": {
+                                                            "old_status": "pending",
+                                                            "new_status": "captured"
+                                                        }
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-12-02T12:03:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Some error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Payments",
+            "description": "Payments"
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/api/payments": {},
+        "/api/payments/authorise": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Authorise a payment",
+                "description": "Authorise a payment",
+                "operationId": "24b47c2f82864db802fc21b24877cdc3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount",
+                                    "currency",
+                                    "token",
+                                    "gateway"
+                                ],
+                                "properties": {
+                                    "gateway": {
+                                        "type": "string",
+                                        "example": "stripe"
+                                    },
+                                    "amount": {
+                                        "type": "number",
+                                        "example": 199.99
+                                    },
+                                    "currency": {
+                                        "type": "string",
+                                        "example": "ZAR"
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "example": "tok_123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment authorised",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "authorised"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Payments",
+            "description": "Payments"
+        }
+    ]
+}

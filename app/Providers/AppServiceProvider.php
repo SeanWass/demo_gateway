@@ -13,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             \App\Services\Payments\PaymentGatewayInterface::class,
-            \App\Services\Payments\ExampleGateway::class
+            \App\Services\Payments\ExampleGateway::class,
+            \App\Support\IdempotencyInterface::class,
+            \App\Support\Idempotency::class
         );
 
         $this->app->singleton(\App\Services\Payments\GatewayManager::class);

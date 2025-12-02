@@ -9,6 +9,7 @@ It has a number of other advantages as well, such as better scaling under high l
 and currency more accurately with regards to precision and rounding.
 
 Within the database, I am storing all payments, payment events, retry attempts and refunds.
+All migrations are in place.
 
 ### Reusable Payment logic
 
@@ -19,9 +20,4 @@ For the retry wrapper, I created an array of different strategies to be used for
 
 ### Payment flow
 Within the payment model, I set up functions that do checks to ensure that only valid payment transistions are allowed.
-
-
-
-
-
 

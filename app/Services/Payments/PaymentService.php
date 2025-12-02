@@ -4,19 +4,24 @@ namespace App\Services\Payments;
 use Exception;
 use App\Models\Refund;
 use App\Models\Payment;
-use App\Support\Idempotency;
 use Illuminate\Support\Str;
 use App\Support\RetryHelper;
 use Illuminate\Support\Facades\DB;
+use App\Support\IdempotencyInterface;
 use Illuminate\Http\Client\RequestException;
 
 class PaymentService
 {
     protected GatewayManager $gatewayManager;
+    protected IdempotencyInterface $idempotencyInterface;
 
-    public function __construct(GatewayManager $gatewayManager)
+    public function __construct(
+        GatewayManager $gatewayManager,
+        IdempotencyInterface $idempotencyInterface
+    )
     {
         $this->gatewayManager = $gatewayManager;
+        $this->idempotencyInterface = $idempotencyInterface;
     }
 
     // Different strategies based on type of exception
@@ -70,7 +75,7 @@ class PaymentService
         $key = 'auth_' . $payment->id;
 
 
-        $result = Idempotency::run(
+        $result = $this->idempotencyInterface->run(
             function () use ($gateway, $amount, $token, $currency, $payment) {
                 return RetryHelper::run(
                     function ($attempt) use ($gateway, $amount, $token, $currency) {
@@ -120,7 +125,7 @@ class PaymentService
         $gateway = $this->gatewayManager->gateway($payment->gateway);
         $key = 'capture_' . $payment->id;
 
-        $result = Idempotency::run(
+        $result = $this->idempotencyInterface->run(
             function () use ($payment, $gateway, $amount) {
                 return RetryHelper::run(
                     function ($attempt) use ($gateway, $payment) {
@@ -160,7 +165,7 @@ class PaymentService
         $gateway = $this->gatewayManager->gateway($payment->gateway);
         $key = 'capture_' . $payment->id;
 
-        $result = Idempotency::run(
+        $result = $this->idempotencyInterface->run(
             function () use ($gateway, $payment) {
                 return RetryHelper::run(
                     function ($attempt) use ($gateway, $payment) {
@@ -206,7 +211,7 @@ class PaymentService
             throw new Exception("Refund exceeds remaining refundable amount.");
         }
 
-        $result = Idempotency::run(
+        $result = $this->idempotencyInterface->run(
             function () use ($gateway, $payment, $amount) {
                 return RetryHelper::run(
                     function ($attempt) use ($gateway, $payment, $amount) {

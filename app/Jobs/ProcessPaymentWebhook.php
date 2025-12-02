@@ -37,7 +37,6 @@ class ProcessPaymentWebhook implements ShouldQueue
         }
 
         // Let the gateway parse the payload into a canonical shape:
-        // ['type' => 'payment_intent.succeeded', 'm_payment_id' => '...', 'gateway_txn_id' => '...', 'amount' => 10.00, 'meta' => [...]]
         if (! method_exists($gatewayInstance, 'parseWebhook')) {
             // fallback: store raw payload
             \Log::info("Webhook received for {$this->gateway} (no parser)", json_decode($this->payload), true);
@@ -48,9 +47,6 @@ class ProcessPaymentWebhook implements ShouldQueue
 
         // Find payment by merchant reference OR gateway txn id
         $payment = null;
-        if (! empty($data['m_payment_id'])) {
-            $payment = Payment::where('m_payment_id', $data['m_payment_id'])->first();
-        }
         if (! $payment && ! empty($data['gateway_txn_id'])) {
             $payment = Payment::where('gateway_txn_id', $data['gateway_txn_id'])->first();
         }

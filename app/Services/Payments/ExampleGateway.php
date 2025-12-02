@@ -53,6 +53,7 @@ class ExampleGateway extends AbstractPaymentGateway
 
             $response = Http::post('https://www.gateway.com/authorise', [
                 'amount' => $data['amount'],
+                'token' => $data['token']
             ])->throw();
 
             return PaymentResult::success(
@@ -243,8 +244,6 @@ class ExampleGateway extends AbstractPaymentGateway
         $secret = env("PAYMENT_EXAMPLE_SECRET");
         $signature = $headers['x-signature'][0] ?? null;  // Need to get index 0 as laravel stores headers as arrays in case of multiple values
         $expected_signature = hash_hmac('sha256', $payload, $secret);
-
-        // \Log::info($expected_signature);
 
         if (!$signature) {
             \Log::error("Signature does not exist");
