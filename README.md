@@ -21,3 +21,12 @@ For the retry wrapper, I created an array of different strategies to be used for
 ### Payment flow
 Within the payment model, I set up functions that do checks to ensure that only valid payment transistions are allowed.
 
+### Swagger
+You can view the API calls at /api/documentation#/
+
+### Example Gateway
+I created an example gateway that fakes responses depending on the amount that is sent through. This allows testing of retrying, failing or success.
+
+#### Unit Tests
+I wrote unit tests that cover the retry helper, the payment gateway and idempotency. 
+

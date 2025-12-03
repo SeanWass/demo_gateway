@@ -14,15 +14,14 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->string('gateway')->index(); // future proofing, ie allowing multiple gateways
-            $table->string('gateway_txn_id')->nullable()->index(); // gateway paymentIntent / pf_payment_id
-            $table->string('m_payment_id')->nullable()->index(); // merchant reference
+            $table->string('gateway')->index();
+            $table->string('gateway_txn_id')->nullable()->index();
             $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->decimal('amount', 14, 2);
             $table->string('currency', 10)->default('ZAR');
-            $table->string('status')->default('pending')->index(); // different statuses of a payment
+            $table->string('status')->default('pending')->index();
             $table->json('metadata')->nullable();
-            $table->json('gateway_response')->nullable(); // last gateway response
+            $table->json('gateway_response')->nullable();
             $table->string('idempotency_key')->nullable()->index();
             $table->timestamps();
             $table->SoftDeletes();

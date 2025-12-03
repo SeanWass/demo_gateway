@@ -57,7 +57,6 @@ class ProcessPaymentWebhook implements ShouldQueue
             // create a minimal record to track the event
             $payment = Payment::create([
                 'gateway' => $this->gateway,
-                'm_payment_id' => $event['m_payment_id'] ?? null,
                 'gateway_txn_id' => $event['gateway_txn_id'] ?? null,
                 'amount' => $event['amount'] ?? 0,
                 'currency' => $event['currency'] ?? 'ZAR',
